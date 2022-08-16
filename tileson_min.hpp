@@ -6886,7 +6886,13 @@ void tson::Tile::performDataCalculations()
  */
 const tson::Vector2f tson::Tile::getPosition(const std::tuple<int, int> &tileDataPos)
 {
-	return {((float) std::get<0>(tileDataPos)) * m_drawingRect.width, ((float) std::get<1>(tileDataPos)) * m_drawingRect.height};
+	if(m_map)
+	{
+		tson::Vector2i tileSize = m_map->getTileSize();
+		return {((float) std::get<0>(tileDataPos)) * tileSize.x, ((float) std::get<1>(tileDataPos)) * tileSize.y + tileSize.y - m_drawingRect.height};
+	}
+	else
+		return {((float) std::get<0>(tileDataPos)) * m_drawingRect.width, ((float) std::get<1>(tileDataPos)) * m_drawingRect.height};
 }
 
 // T i l e O b j e c t . h p p

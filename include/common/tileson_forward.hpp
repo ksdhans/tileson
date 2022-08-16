@@ -64,19 +64,19 @@ void tson::Tile::performDataCalculations()
 
     int const gid = static_cast<int>(getGid());
     if (gid >= firstId && gid <= lastId)
-    {
-        int const baseTilePosition = (gid - firstId);
+	{
+		int const baseTilePosition = (gid - firstId);
 
-        int const tileModX = (baseTilePosition % columns);
-        int const currentRow = (baseTilePosition / columns);
-        int const offsetX = (tileModX != 0) ? ((tileModX) * m_map->getTileSize().x) : (0 * m_map->getTileSize().x);
-        int const offsetY =  (currentRow < rows-1) ? (currentRow * m_map->getTileSize().y) : ((rows-1) * m_map->getTileSize().y);
+		int const tileModX = (baseTilePosition % columns);
+		int const currentRow = (baseTilePosition / columns);
+		int const offsetX = (tileModX != 0) ? ((tileModX) * m_map->getTileSize().x) : (0 * m_map->getTileSize().x);
+		int const offsetY =  (currentRow < rows-1) ? (currentRow * m_map->getTileSize().y) : ((rows-1) * m_map->getTileSize().y);
 
-        tson::Vector2i spacing = m_tileset->getMarginSpacingOffset({tileModX, currentRow});
-        m_drawingRect = { offsetX + spacing.x, offsetY + spacing.y, m_map->getTileSize().x, m_map->getTileSize().y };
-    }
-    else
-        m_drawingRect = {0, 0, 0, 0};
+		tson::Vector2i spacing = m_tileset->getMarginSpacingOffset({tileModX, currentRow});
+		m_drawingRect = { offsetX + spacing.x, offsetY + spacing.y, m_map->getTileSize().x, m_map->getTileSize().y };
+	}
+	else
+		m_drawingRect = {0, 0, 0, 0};
 }
 
 /*!
@@ -85,7 +85,13 @@ void tson::Tile::performDataCalculations()
  */
 const tson::Vector2f tson::Tile::getPosition(const std::tuple<int, int> &tileDataPos)
 {
-    return {((float) std::get<0>(tileDataPos)) * m_drawingRect.width, ((float) std::get<1>(tileDataPos)) * m_drawingRect.height};
+    if(m_map) 
+    {
+        tson::Vector2i tileSize = m_map->getTileSize();
+        return {((float) std::get<0>(tileDataPos)) * tileSize.x, ((float) std::get<1>(tileDataPos)) * tileSize.y + tileSize.y - m_drawingRect.height};
+    }
+    else
+        return {((float) std::get<0>(tileDataPos)) * m_drawingRect.width, ((float) std::get<1>(tileDataPos)) * m_drawingRect.height};
 }
 
 // T i l e O b j e c t . h p p
