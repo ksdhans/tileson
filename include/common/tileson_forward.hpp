@@ -56,6 +56,9 @@ void tson::Tile::performDataCalculations()
 
     int firstId = m_tileset->getFirstgid(); //First tile id of the tileset
     int columns = m_tileset->getColumns();
+    if(!columns)
+        return;
+	
     int rows = m_tileset->getTileCount() / columns;
     int lastId = (m_tileset->getFirstgid() + m_tileset->getTileCount()) - 1;
 

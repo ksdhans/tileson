@@ -155,6 +155,17 @@ bool tson::Tile::parse(IJson &json, tson::Tileset *tileset, tson::Map *map)
 
     if(json.count("imagewidth") > 0 && json.count("imageheight") > 0)
         m_imageSize = {json["imagewidth"].get<int>(), json["imageheight"].get<int>()}; //Optional
+	
+    if(json.count("x") > 0) m_drawingRect.x = json["x"].get<int>(); else m_drawingRect.x = 0; // Optional
+    if(json.count("y") > 0) m_drawingRect.y = json["y"].get<int>(); else m_drawingRect.y = 0; // Optional
+    if(json.count("width") > 0) 
+        m_drawingRect.width = json["width"].get<int>();
+    else
+        m_drawingRect.width = m_imageSize.x;
+    if(json.count("height") > 0) 
+        m_drawingRect.height = json["height"].get<int>();
+    else
+        m_drawingRect.height = m_imageSize.y;
 
     //More advanced data
     if(json.count("animation") > 0 && json["animation"].isArray())

@@ -4823,6 +4823,17 @@ bool tson::Tile::parse(IJson &json, tson::Tileset *tileset, tson::Map *map)
 	if(json.count("imagewidth") > 0 && json.count("imageheight") > 0)
 		m_imageSize = {json["imagewidth"].get<int>(), json["imageheight"].get<int>()}; //Optional
 
+	if(json.count("x") > 0) m_drawingRect.x = json["x"].get<int>(); else m_drawingRect.x = 0; // Optional
+	if(json.count("y") > 0) m_drawingRect.y = json["y"].get<int>(); else m_drawingRect.y = 0; // Optional
+	if(json.count("width") > 0)
+		m_drawingRect.width = json["width"].get<int>();
+	else
+		m_drawingRect.width = m_imageSize.x;
+	if(json.count("height") > 0)
+		m_drawingRect.height = json["height"].get<int>();
+	else
+		m_drawingRect.height = m_imageSize.y;
+
 	//More advanced data
 	if(json.count("animation") > 0 && json["animation"].isArray())
 	{
@@ -5346,7 +5357,7 @@ bool tson::Tileset::parse(IJson &json, tson::Map *map)
 
 	if(json.count("columns") > 0) m_columns = json["columns"].get<int>(); else allFound = false;
 
-	if(json.count("image") > 0) m_image = fs::path(json["image"].get<std::string>()); else allFound = false;
+	if(json.count("image") > 0) m_image = fs::path(json["image"].get<std::string>()); else if(m_columns > 0) allFound = false;
 
 	if(json.count("margin") > 0) m_margin = json["margin"].get<int>(); else allFound = false;
 	if(json.count("name") > 0) m_name = json["name"].get<std::string>(); else allFound = false;
@@ -5357,7 +5368,7 @@ bool tson::Tileset::parse(IJson &json, tson::Map *map)
 	if(json.count("grid") > 0) m_grid = tson::Grid(json["grid"]);
 
 	if(json.count("imagewidth") > 0 && json.count("imageheight") > 0)
-		m_imageSize = {json["imagewidth"].get<int>(), json["imageheight"].get<int>()}; else allFound = false;
+		m_imageSize = {json["imagewidth"].get<int>(), json["imageheight"].get<int>()}; else if(!m_image.empty()) allFound = false;
 	if(json.count("tilewidth") > 0 && json.count("tileheight") > 0)
 		m_tileSize = {json["tilewidth"].get<int>(), json["tileheight"].get<int>()}; else allFound = false;
 	if(json.count("tileoffset") > 0)
@@ -6846,6 +6857,9 @@ void tson::Tile::performDataCalculations()
 
 	int firstId = m_tileset->getFirstgid(); //First tile id of the tileset
 	int columns = m_tileset->getColumns();
+	if(!columns)
+		return;
+
 	int rows = m_tileset->getTileCount() / columns;
 	int lastId = (m_tileset->getFirstgid() + m_tileset->getTileCount()) - 1;
 

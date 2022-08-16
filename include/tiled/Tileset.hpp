@@ -149,7 +149,7 @@ bool tson::Tileset::parse(IJson &json, tson::Map *map)
 
     if(json.count("columns") > 0) m_columns = json["columns"].get<int>(); else allFound = false;
 
-    if(json.count("image") > 0) m_image = fs::path(json["image"].get<std::string>()); else allFound = false;
+    if(json.count("image") > 0) m_image = fs::path(json["image"].get<std::string>()); else if(m_columns > 0) allFound = false;
 
     if(json.count("margin") > 0) m_margin = json["margin"].get<int>(); else allFound = false;
     if(json.count("name") > 0) m_name = json["name"].get<std::string>(); else allFound = false;
@@ -160,7 +160,7 @@ bool tson::Tileset::parse(IJson &json, tson::Map *map)
     if(json.count("grid") > 0) m_grid = tson::Grid(json["grid"]);
 
     if(json.count("imagewidth") > 0 && json.count("imageheight") > 0)
-        m_imageSize = {json["imagewidth"].get<int>(), json["imageheight"].get<int>()}; else allFound = false;
+        m_imageSize = {json["imagewidth"].get<int>(), json["imageheight"].get<int>()}; else if(!m_image.empty()) allFound = false;
     if(json.count("tilewidth") > 0 && json.count("tileheight") > 0)
         m_tileSize = {json["tilewidth"].get<int>(), json["tileheight"].get<int>()}; else allFound = false;
     if(json.count("tileoffset") > 0)
